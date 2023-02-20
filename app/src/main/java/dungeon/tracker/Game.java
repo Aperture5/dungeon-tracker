@@ -8,7 +8,48 @@ import java.util.Scanner;
 
 public class Game {
 
-    public static void main(String[] args) {
+    Place current;
+    
+    Game() {
+        Place entrance = new Place();
+        entrance.description = "You are at the dungeon entrace, there is a lit lantern.";
+        
+        Place sword = new Place();
+        sword.description = "As you walk down the damp corridors of the dungeon you see a room with a sword in a stone.";
+        
+        entrance.north = sword;
+        sword.south = entrance;
+        current = entrance;
+        
+    }
+    
+    void start() {
+        Scanner input = new Scanner(System.in);
+        while(true){
+            System.out.println(current.description);
+            System.out.print("What do you do? ");
+            String answer = input.nextLine();
+            if (answer.equals("north")) {
+                if (current.north != null) {
+                    current = current.north;
+                } else {
+                    System.out.println("You cannot go there.");
+                }
+            }
+            if (answer.equals("south")) {
+                if (current.south != null ) {
+                    current = current.south;
+                } else {
+                    System.out.println("You cannot go there.");
+                }
+            }
+            if(answer.equals("exit")){
+                return;
+            }
+        }
+    }
+    
+    void startOld() {
         Scanner input = new Scanner(System.in);
         System.out.print("Would you like to start? (y/n) ");
         String answer = input.nextLine();
@@ -67,5 +108,9 @@ public class Game {
         } else {
             System.out.println("Goodbye!");
         }
+    }
+
+    public static void main(String[] args) {
+        new Game().start();
     }
 }
