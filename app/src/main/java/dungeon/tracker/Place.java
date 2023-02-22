@@ -4,6 +4,9 @@
  */
 package dungeon.tracker;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  *
  * @author bali
@@ -14,5 +17,10 @@ public class Place {
     Place west;
     Place east;
     Place south;
+    boolean dark = true;
+    Set<Item> items = new HashSet<>();
     
+    Place(String b){
+        description = b;
+    }
 }
