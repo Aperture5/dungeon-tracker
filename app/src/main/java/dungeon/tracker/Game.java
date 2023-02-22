@@ -22,13 +22,21 @@ public class Game {
 
         Place corridor = new Place("As you walk down in the damp corridor of the dungeon.");
 
+        Place zombieRoom = new Place("This room smells of rotten meat.");
+        
         entrance.north = corridor;
         corridor.south = entrance;
+        corridor.east = zombieRoom;
+        zombieRoom.west=corridor;
         current = entrance;
 
         entrance.items.add(lamp);
         corridor.items.add(sword);
+        
+        Monster zombie = new Monster("John the zombie");
+        zombieRoom.monster = zombie;
     }
+    
 
     void start() {
         Scanner input = new Scanner(System.in);
@@ -40,6 +48,10 @@ public class Game {
                     for (Item item : current.items) {
                         System.out.println(item.name);
                     }
+                }
+                if (current.monster !=null){
+                    System.out.println("There is a spooky monster here");
+                    System.out.println(current.monster.name);
                 }
             } else {
                 System.out.println("It is dark you see darkness.");

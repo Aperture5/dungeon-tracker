@@ -19,6 +19,7 @@ public class Place {
     Place south;
     boolean dark = true;
     Set<Item> items = new HashSet<>();
+    Monster monster;
     
     Place(String b){
         description = b;
