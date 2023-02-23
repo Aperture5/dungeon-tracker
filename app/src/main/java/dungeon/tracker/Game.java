@@ -15,6 +15,8 @@ public class Game {
 
     Item lamp = new Item("lamp");
     Item sword = new Item("sword");
+    Item key = new Item("key");
+    Item diamond = new Item("diamond");
 
     Game() {
         Place entrance = new Place("You are at the dungeon entrace.");
@@ -22,25 +24,33 @@ public class Game {
 
         Place corridor = new Place("You are in the damp corridor of the dungeon.");
 
-        Place zombieRoom = new Place("This room smells of rotten meat.");
+        Place zombieRoom = new Place("This room smells of rotten meat.You see a gate north with a golden lock.");
+        
+        Place treasure = new Place("This room has a chest in the middle.");
         
         entrance.north = corridor;
         corridor.south = entrance;
         corridor.east = zombieRoom;
         zombieRoom.west=corridor;
+        zombieRoom.north=treasure;
+        treasure.south=zombieRoom;
+        
         current = entrance;
 
         entrance.items.add(lamp);
         corridor.items.add(sword);
+        treasure.items.add(diamond);
+        treasure.needsKey = true;
         
-        Monster zombie = new Monster("John the zombie");
+        Monster zombie = new Monster("John the zombie who has a golden key stuck in his brain");
         zombieRoom.monster = zombie;
+        zombie.item = key;
     }
     
 
     void start() {
         Scanner input = new Scanner(System.in);
-        while (true) {
+        while (!bag.contains(diamond)) {
             if (!current.dark || bag.contains(lamp)) {
                 System.out.println(current.description);
                 if (!current.items.isEmpty()) {
@@ -64,7 +74,7 @@ public class Game {
                     if (bag.contains(sword)){
                         System.out.print("You chose to fight. You swing your sword  ");
 
-                            int dice = new Random().nextInt(6) + 1;
+                            int dice = new Random().nextInt(6) + 6;
                             int zomdice = new Random().nextInt(6) + 1;
 
                             System.out.println("you throw " + dice);
@@ -74,6 +84,7 @@ public class Game {
                             }
                             System.out.println("Zombie threw " + zomdice);
                             if (dice >= zomdice) {
+                                current.items.add(current.monster.item);
                                 current.monster =null;
                                 System.out.println("You successfully swung your sword and defeated the zombie. Congratulations! ");
                             } else {
@@ -93,7 +104,10 @@ public class Game {
             }
             if (answer.equals("north")) {
                 if (current.north != null) {
-                    current = current.north;
+                    if (!current.north.needsKey || bag.contains(key)){
+                        
+                        current = current.north;
+                    }
                 } else {
                     System.out.println("You cannot go there.");
                 }
@@ -138,6 +152,7 @@ public class Game {
                 }
             }
         }
+        System.out.println("You have the diamond you win.");
 
     }
 
