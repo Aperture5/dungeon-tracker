@@ -20,7 +20,7 @@ public class Game {
         Place entrance = new Place("You are at the dungeon entrace.");
         entrance.dark = false;
 
-        Place corridor = new Place("As you walk down in the damp corridor of the dungeon.");
+        Place corridor = new Place("You are in the damp corridor of the dungeon.");
 
         Place zombieRoom = new Place("This room smells of rotten meat.");
         
@@ -58,9 +58,38 @@ public class Game {
             }
             System.out.print("What do you do? ");
             String answer = input.nextLine();
+            
+            if (answer.equals("figth")){
+                if (current.monster !=null){
+                    if (bag.contains(sword)){
+                        System.out.print("You chose to fight. You swing your sword  ");
+
+                            int dice = new Random().nextInt(6) + 1;
+                            int zomdice = new Random().nextInt(6) + 1;
+
+                            System.out.println("you throw " + dice);
+                            try {
+                                Thread.sleep(2000);
+                            } catch (InterruptedException ex) {
+                            }
+                            System.out.println("Zombie threw " + zomdice);
+                            if (dice >= zomdice) {
+                                current.monster =null;
+                                System.out.println("You successfully swung your sword and defeated the zombie. Congratulations! ");
+                            } else {
+                                System.out.println("The zombie avoided yor sword and bite you. You spent the rest of youre undead life as a happy zombie in the dungeon.");
+                                return;
+                            }
+                    }else {
+                        System.out.println("You have weak hand best not to figth.");
+                    }
+                }else {
+                    System.out.println("You fougth the air and won!");
+                }
+            }
 
             if (answer.equals("help")){
-                System.out.println("Commands north/south/east/west/take/i/exit.");
+                System.out.println("Commands north/south/east/west/take/i/figth/exit.");
             }
             if (answer.equals("north")) {
                 if (current.north != null) {
