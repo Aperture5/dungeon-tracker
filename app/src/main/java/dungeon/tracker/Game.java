@@ -19,14 +19,14 @@ public class Game {
     Item diamond = new Item("diamond");
 
     Game() {
-        Place entrance = new Place("You are at the dungeon entrace.");
+        Place entrance = new Place("You are at the dungeon entrace. There is a dark corridor leading to north");
         entrance.dark = false;
 
-        Place corridor = new Place("You are in the damp corridor of the dungeon.");
+        Place corridor = new Place("You are in the damp corridor of the dungeon. There is a room to your east and the the pathway leads to south.");
 
-        Place zombieRoom = new Place("This room smells of rotten meat.You see a gate north with a golden lock.");
+        Place zombieRoom = new Place("This room smells of rotten meat. You see a gate north with a golden lock. There is a corridor to the west.");
         
-        Place treasure = new Place("This room has a chest in the middle.");
+        Place treasure = new Place("This small room has a chest in the middle.");
         
         entrance.north = corridor;
         corridor.south = entrance;
@@ -69,12 +69,12 @@ public class Game {
             System.out.print("What do you do? ");
             String answer = input.nextLine();
             
-            if (answer.equals("figth")){
+            if (answer.equals("fight")){
                 if (current.monster !=null){
                     if (bag.contains(sword)){
                         System.out.print("You chose to fight. You swing your sword  ");
 
-                            int dice = new Random().nextInt(6) + 6;
+                            int dice = new Random().nextInt(6) + 2;
                             int zomdice = new Random().nextInt(6) + 1;
 
                             System.out.println("you throw " + dice);
@@ -100,7 +100,7 @@ public class Game {
             }
 
             if (answer.equals("help")){
-                System.out.println("Commands north/south/east/west/take/i/figth/exit.");
+                System.out.println("Commands north/south/east/west/take/i/fight/exit.");
             }
             if (answer.equals("north")) {
                 if (current.north != null) {

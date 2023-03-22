@@ -10,6 +10,7 @@ package dungeon.tracker;
  */
 public class Monster {
     String name;
+    Item item;
 
     public Monster(String name) {
         this.name = name;

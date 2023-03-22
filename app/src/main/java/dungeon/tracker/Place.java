@@ -18,6 +18,7 @@ public class Place {
     Place east;
     Place south;
     boolean dark = true;
+    boolean needsKey = false;
     Set<Item> items = new HashSet<>();
     Monster monster;
     
