@@ -3,6 +3,9 @@
  */
 package dungeon.tracker;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Scanner;
@@ -25,132 +28,162 @@ public class Game {
         Place corridor = new Place("You are in the damp corridor of the dungeon. There is a room to your east and the the pathway leads to south.");
 
         Place zombieRoom = new Place("This room smells of rotten meat. You see a gate north with a golden lock. There is a corridor to the west.");
-        
+
         Place treasure = new Place("This small room has a chest in the middle.");
-        
+
         entrance.north = corridor;
         corridor.south = entrance;
         corridor.east = zombieRoom;
-        zombieRoom.west=corridor;
-        zombieRoom.north=treasure;
-        treasure.south=zombieRoom;
-        
+        zombieRoom.west = corridor;
+        zombieRoom.north = treasure;
+        treasure.south = zombieRoom;
+
         current = entrance;
 
         entrance.items.add(lamp);
         corridor.items.add(sword);
         treasure.items.add(diamond);
         treasure.needsKey = true;
-        
+
         Monster zombie = new Monster("John the zombie who has a golden key stuck in his brain");
         zombieRoom.monster = zombie;
         zombie.item = key;
     }
-    
 
-    void start() {
-        Scanner input = new Scanner(System.in);
-        while (!bag.contains(diamond)) {
-            if (!current.dark || bag.contains(lamp)) {
-                System.out.println(current.description);
-                if (!current.items.isEmpty()) {
-                    System.out.println("Here you see: ");
-                    for (Item item : current.items) {
-                        System.out.println(item.name);
-                    }
+    String see() {
+        StringWriter ret = new StringWriter();
+        PrintWriter out = new PrintWriter(ret);
+
+        if (!current.dark || bag.contains(lamp)) {
+            out.println(current.description);
+            if (!current.items.isEmpty()) {
+                out.println("Here you see: ");
+                for (Item item : current.items) {
+                    out.println(item.name);
                 }
-                if (current.monster !=null){
-                    System.out.println("There is a spooky monster here");
-                    System.out.println(current.monster.name);
+            }
+            if (current.monster != null) {
+                out.println("There is a spooky monster here");
+                out.println(current.monster.name);
+            }
+        } else {
+            out.println("It is dark you see darkness.");
+        }
+        
+        return ret.toString();        
+    }
+    
+    String action(String command) {
+        StringWriter ret = new StringWriter();
+        PrintWriter out = new PrintWriter(ret);
+        if (command.equals("fight")) {
+            if (current.monster != null) {
+                if (bag.contains(sword)) {
+                    out.print("You chose to fight. You swing your sword  ");
+
+                    int dice = new Random().nextInt(6) + 2;
+                    int zomdice = new Random().nextInt(6) + 1;
+
+                    out.println("you throw " + dice);
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException ex) {
+                    }
+                    out.println("Zombie threw " + zomdice);
+                    if (dice >= zomdice) {
+                        current.items.add(current.monster.item);
+                        current.monster = null;
+                        out.println("You successfully swung your sword and defeated the zombie. Congratulations! ");
+                    } else {
+                        out.println("The zombie avoided yor sword and bite you. You spent the rest of youre undead life as a happy zombie in the dungeon.");
+                        return null;
+                    }
+                } else {
+                    out.println("You have weak hand best not to figth.");
                 }
             } else {
-                System.out.println("It is dark you see darkness.");
+                out.println("You fougth the air and won!");
             }
+        }
+
+        if (command.equals("help")) {
+            out.println("Commands north/south/east/west/take/i/fight/exit.");
+        }
+        if (command.equals("north")) {
+            if (current.north != null) {
+                if (!current.north.needsKey || bag.contains(key)) {
+
+                    current = current.north;
+                }
+            } else {
+                out.println("You cannot go there.");
+            }
+        }
+
+        if (command.equals("south")) {
+            if (current.south != null) {
+                current = current.south;
+            } else {
+                out.println("You cannot go there.");
+            }
+        }
+
+        if (command.equals("east")) {
+            if (current.east != null) {
+                current = current.east;
+            } else {
+                out.println("You cannot go there.");
+            }
+        }
+
+        if (command.equals("west")) {
+            if (current.west != null) {
+                current = current.west;
+            } else {
+                out.println("You cannot go there.");
+            }
+        }
+
+        if (command.equals("take")) {
+            bag.addAll(current.items);
+            current.items.clear();
+        }
+        if (command.equals("exit")) {
+            return null;
+        }
+        if (command.equals("i")) {
+            out.println("You have:");
+            for (Item item : bag) {
+                out.println(item.name);
+
+            }
+        }
+        return ret.toString();
+
+    }
+
+    boolean haveIWon() {
+        return bag.contains(diamond);
+    }
+    
+    void start() {
+        Scanner input = new Scanner(System.in);
+        while (!haveIWon()) {
+            System.out.println(see());
+
             System.out.print("What do you do? ");
-            String answer = input.nextLine();
-            
-            if (answer.equals("fight")){
-                if (current.monster !=null){
-                    if (bag.contains(sword)){
-                        System.out.print("You chose to fight. You swing your sword  ");
 
-                            int dice = new Random().nextInt(6) + 2;
-                            int zomdice = new Random().nextInt(6) + 1;
-
-                            System.out.println("you throw " + dice);
-                            try {
-                                Thread.sleep(2000);
-                            } catch (InterruptedException ex) {
-                            }
-                            System.out.println("Zombie threw " + zomdice);
-                            if (dice >= zomdice) {
-                                current.items.add(current.monster.item);
-                                current.monster =null;
-                                System.out.println("You successfully swung your sword and defeated the zombie. Congratulations! ");
-                            } else {
-                                System.out.println("The zombie avoided yor sword and bite you. You spent the rest of youre undead life as a happy zombie in the dungeon.");
-                                return;
-                            }
-                    }else {
-                        System.out.println("You have weak hand best not to figth.");
-                    }
-                }else {
-                    System.out.println("You fougth the air and won!");
-                }
-            }
-
-            if (answer.equals("help")){
-                System.out.println("Commands north/south/east/west/take/i/fight/exit.");
-            }
-            if (answer.equals("north")) {
-                if (current.north != null) {
-                    if (!current.north.needsKey || bag.contains(key)){
-                        
-                        current = current.north;
-                    }
-                } else {
-                    System.out.println("You cannot go there.");
-                }
-            }
-
-            if (answer.equals("south")) {
-                if (current.south != null) {
-                    current = current.south;
-                } else {
-                    System.out.println("You cannot go there.");
-                }
-            }
+            String command = input.nextLine();
             
-            if (answer.equals("east")) {
-                if (current.east != null) {
-                    current = current.east;
-                } else {
-                    System.out.println("You cannot go there.");
-                }
-            }
+            String result = action(command);
             
-            if (answer.equals("west")) {
-                if (current.west != null) {
-                    current = current.west;
-                } else {
-                    System.out.println("You cannot go there.");
-                }
-            }
-            
-            if (answer.equals("take")) {
-                bag.addAll(current.items);
-                current.items.clear();
-            }
-            if (answer.equals("exit")) {
+            if (result != null) {
+                System.out.println(result);
+            } else {
+                // result == null means the game ends
                 return;
             }
-            if (answer.equals("i")) {
-                System.out.println("You have:");
-                for (Item item : bag) {
-                    System.out.println(item.name);
 
-                }
-            }
         }
         System.out.println("You have the diamond you win.");
 
